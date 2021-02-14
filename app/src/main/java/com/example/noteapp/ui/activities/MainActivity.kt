@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
 
         notesViewModel = ViewModelProvider(this)[NotesViewModel::class.java]
-        Log.d("random", "{$random, viewmodel ${notesViewModel.text}}")
+        Log.d("COS", "{$random, elko tworze view model typie")
 
     }
 }
