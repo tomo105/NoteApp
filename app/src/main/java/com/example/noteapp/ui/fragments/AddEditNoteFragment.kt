@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.noteapp.R
+import com.example.noteapp.data.Note
 import com.example.noteapp.viewmodels.NotesViewModel
 import kotlinx.android.synthetic.main.fragment_add_edit_note.*
 import kotlinx.android.synthetic.main.note_item.*
+import java.util.*
 
 class AddEditNoteFragment : Fragment() {
 
@@ -20,13 +22,36 @@ class AddEditNoteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notesViewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
+        notesViewModel =
+            ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
 
         requireActivity()                                       //iesli ktos bedzie w naszym fragmencie i kliknie ze chce wrocic to dostaniemy taka informacje
             .onBackPressedDispatcher
-            .addCallback(this, object : OnBackPressedCallback(true){
+            .addCallback(this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    Log.d("TAG","Pressed collback from fragment ")
+                    if (title_addeditFrag.text.isNotEmpty() || message_addeditFrag.text.isNotEmpty()) {
+                        val title = title_addeditFrag.text.toString()
+                        val message = message_addeditFrag.text.toString()
+                        val date = Calendar.getInstance().timeInMillis
+
+                        if (notesViewModel.getSelectedNote().value == null) {              //add new note
+
+                            val note = Note(title, message, date)
+                            notesViewModel.insert(note)
+                        } else {                                                             //update note
+                            val note = Note(title, message, date).apply {
+                                rowId = notesViewModel.getSelectedNote().value!!.rowId   // the same rowId to update not create new!!
+                            }
+                            notesViewModel.update(note)
+                        }
+                        isEnabled = false
+                        requireActivity().onBackPressed()                                   //cofamy sie bo robocie
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressed()                                   // nothing happen, not data inserted, maybe a missclick
+                    }
+                    Log.d("TAG", "Pressed collback from fragment ")
+
                 }
 
             })
