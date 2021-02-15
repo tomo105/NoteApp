@@ -1,9 +1,11 @@
 package com.example.noteapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,9 +20,16 @@ class AddEditNoteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notesViewModel =
-            ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
+        notesViewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
 
+        requireActivity()                                       //iesli ktos bedzie w naszym fragmencie i kliknie ze chce wrocic to dostaniemy taka informacje
+            .onBackPressedDispatcher
+            .addCallback(this, object : OnBackPressedCallback(true){
+                override fun handleOnBackPressed() {
+                    Log.d("TAG","Pressed collback from fragment ")
+                }
+
+            })
     }
 
     override fun onCreateView(
