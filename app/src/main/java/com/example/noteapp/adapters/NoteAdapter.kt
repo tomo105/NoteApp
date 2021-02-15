@@ -30,7 +30,7 @@ class NoteAdapter(private val notesList: List<Note>, private val listener: OnIte
         holder.itemView.setBackgroundColor(Color.WHITE)
 
         if (notesList[position].isSelected)
-            holder.itemView.setBackgroundColor(Color.LTGRAY)
+            holder.itemView.setBackgroundColor(Color.LTGRAY)                                                //change color to ltgrey
 
         holder.itemView.note_title.text = notesList[position].title
         holder.itemView.note_message.text = notesList[position].message
