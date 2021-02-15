@@ -38,18 +38,19 @@ class AddEditNoteFragment : Fragment() {
 
                             val note = Note(title, message, date)
                             notesViewModel.insert(note)
-                        } else {                                                             //update note
-                            val note = Note(title, message, date).apply {
-                                rowId = notesViewModel.getSelectedNote().value!!.rowId   // the same rowId to update not create new!!
+                        } else {                                                            //update note
+                            val selectedNote = notesViewModel.getSelectedNote().value!!
+                            if (selectedNote.title != title || selectedNote.message != message) {                           // check if make any difference !!!
+                                val note = Note(title, message, date).apply {
+                                    rowId = notesViewModel.getSelectedNote().value!!.rowId                               // the same rowId to update not create new!!
+                                }
+                                notesViewModel.update(note)
                             }
-                            notesViewModel.update(note)
                         }
-                        isEnabled = false
-                        requireActivity().onBackPressed()                                   //cofamy sie bo robocie
-                    } else {
-                        isEnabled = false
-                        requireActivity().onBackPressed()                                   // nothing happen, not data inserted, maybe a missclick
                     }
+
+                    isEnabled = false
+                    requireActivity().onBackPressed()                                   // nothing happen, not data inserted, maybe a missclick -  //cofamy sie bo robocie
                     Log.d("TAG", "Pressed collback from fragment ")
 
                 }
@@ -75,5 +76,10 @@ class AddEditNoteFragment : Fragment() {
                 message_addeditFrag.setText(it.message)
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        notesViewModel.setSelectedNote(null)                                        // when creating a new note you need to have a nothing in your note, so when you go out from fragment you need to set selected note to null!! override previous note which you can update before!!
     }
 }
