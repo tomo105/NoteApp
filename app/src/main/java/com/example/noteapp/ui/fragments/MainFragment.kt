@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,16 +27,18 @@ import kotlin.collections.ArrayList
 // NoteAdapter.OnItemClickListener  -- moj interfejs obslugujacy klikniecie na notatce z adaptera
 // dzieki temu mamy dane z Adaptera dostepne w Fragmencie
 
-class MainFragment : Fragment(), NoteAdapter.OnItemClickListener {
+class MainFragment : Fragment(), NoteAdapter.OnItemClickListener, SortDialogFragment.OnItemClickDialogListener {
 
     private lateinit var notesViewModel: NotesViewModel
     private lateinit var noteAdapter: NoteAdapter
+    private val requestCode = -123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notesViewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]                                                  //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego )!!!
+        notesViewModel =
+            ViewModelProvider(requireActivity())[NotesViewModel::class.java]                                                  //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego )!!!
 
-        requireActivity()
+        requireActivity()                                                                                                    // if we are in 'selection' mode  we can go out from it using back press !!
             .onBackPressedDispatcher
             .addCallback(this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -48,7 +51,7 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener {
                 }
 
             })
-    //        CoroutineScope(Dispatchers.IO).launch {
+        //        CoroutineScope(Dispatchers.IO).launch {                           // create 1000 notes
 //            for (i in 0..1000) {
 //                val note = Note("$i", "$i", Calendar.getInstance().timeInMillis, false)
 //                notesViewModel.insert(note)
@@ -65,10 +68,15 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener {
             if (notesViewModel.multiSelectMode) {
                 notesViewModel.delete(notesViewModel.selectedNotesToDelete.toList())                                    // toList gdyz funkcja delete przyjmuje List anie ArrayList !!!
                 exitMultiSelectMode()
-            }
-            else {
+            } else
                 findNavController().navigate(R.id.addEditNoteFragment)                                                           //zarzada nawigacją, odnosnik do fragmentu
-            }
+        }
+        sortData_fb.setOnClickListener {
+            val sortDialogFragment = SortDialogFragment()
+            sortDialogFragment.setTargetFragment(this, requestCode)
+           // sortDialogFragment
+
+            sortDialogFragment.show(parentFragmentManager,"SortDialogFragment" )
         }
     }
 
@@ -83,11 +91,7 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener {
     }
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -113,20 +117,32 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener {
         }
     }
 
+    override fun onItemClickDialog(sortDesc: Boolean) {
+        //ustawienie sortowania w viewmodel
+        notesViewModel.sortDesc = sortDesc
+        updateNotes(notesViewModel.allNotes.value!!)
+
+
+        Log.d("OK", "udało sie on item click dialog  $sortDesc")
+    }
+
     private fun updateNotes(list: List<Note>) {
-        noteAdapter = NoteAdapter(
-            list,
-            this
-        )                                                                //this bo implemetujemy w naszym fragmencie  obiekt ktory jest listenerem : NoteAdapter.OnItemClickListener
+        noteAdapter = if (notesViewModel.sortDesc) NoteAdapter(list, this)                                                                //this bo implemetujemy w naszym fragmencie  obiekt ktory jest listenerem : NoteAdapter.OnItemClickListener
+                      else NoteAdapter(list.asReversed(), this)
         recyclerView.adapter = noteAdapter
     }
 
     private fun updateButtonUI() {                              //c
         if (notesViewModel.multiSelectMode) {
-            addNote_fb.setImageIcon(Icon.createWithResource(requireContext(), R.drawable.ic_delete) )
+            addNote_fb.setImageIcon(Icon.createWithResource(requireContext(), R.drawable.ic_delete))
             addNote_fb.labelText = "Delete notes"
         } else {
-            addNote_fb.setImageIcon(Icon.createWithResource(requireContext(), R.drawable.ic_note_add) )
+            addNote_fb.setImageIcon(
+                Icon.createWithResource(
+                    requireContext(),
+                    R.drawable.ic_note_add
+                )
+            )
             addNote_fb.labelText = "Add note"
         }
     }
