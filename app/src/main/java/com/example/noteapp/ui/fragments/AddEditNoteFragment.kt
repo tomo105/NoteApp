@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,8 +23,7 @@ class AddEditNoteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notesViewModel =
-            ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
+        notesViewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]   //requireActivity() ---> ten sam co jest w rodzicu (nie zrobi nowego) !!! wlasciclelem tego fragmentu jest aktywnosc --> aktywnosc rodzic tego frsagmetu
 
         requireActivity()                                       //jesli ktos bedzie w naszym fragmencie i kliknie ze chce wrocic to dostaniemy taka informacje
             .onBackPressedDispatcher
@@ -57,11 +57,7 @@ class AddEditNoteFragment : Fragment() {
             })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // inflate rozdmuchuje widok
         return inflater.inflate(R.layout.fragment_add_edit_note, container, false)
     }
@@ -69,16 +65,16 @@ class AddEditNoteFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Take note"
+
         notesViewModel.getSelectedNote().observe(viewLifecycleOwner, Observer { note ->
             note?.let {
                 title_addeditFrag.setText(it.title)
                 message_addeditFrag.setText(it.message)
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = "Edit note"
+
             }
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        notesViewModel.setSelectedNote(null)                                        // when creating a new note you need to have a nothing in your note, so when you go out from fragment you need to set selected note to null!! override previous note which you can update before!!
-    }
 }

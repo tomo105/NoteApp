@@ -15,9 +15,7 @@ class NotesViewModel(app: Application) : AndroidViewModel(app) {
     private val selectedNote = MutableLiveData<Note?>() // aby
 
     fun getSelectedNote(): LiveData<Note?> = selectedNote                                         // pobierany livedata ale juz nie zmienne tylko zwykle
-    fun setSelectedNote(note: Note?) {
-        selectedNote.postValue(note)                                                              // zmieniamy obiekt --> moze byc null wiec nie wono dodac !!
-        }
+    fun setSelectedNote(note: Note?) { selectedNote.postValue(note) }                                                             // zmieniamy obiekt --> moze byc null wiec nie wono dodac !!
 
     var sortDesc = true
     var multiSelectMode = false                                                                    //usuwanie i odznaczanie notatek
@@ -28,22 +26,25 @@ class NotesViewModel(app: Application) : AndroidViewModel(app) {
             repository.insert(note)
         }
     }
-
     fun update(note: Note) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.update(note)
         }
     }
-
     fun delete(listNotes: List<Note>) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.delete(listNotes)
         }
     }
-
     fun clearDatabase() {
         CoroutineScope(Dispatchers.IO).launch {
             repository.clearDatabase()
+        }
+    }
+    fun findInNotes(text : String): List<Note> {
+        val list = allNotes.value
+        return list!!.filter { note ->
+            note.title.contains(text) || note.message.contains(text)
         }
     }
 }

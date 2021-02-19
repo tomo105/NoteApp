@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         notesViewModel = ViewModelProvider(this)[NotesViewModel::class.java]
+
         Log.d("COS", "{$random, elko tworze view model typie")
 
     }
