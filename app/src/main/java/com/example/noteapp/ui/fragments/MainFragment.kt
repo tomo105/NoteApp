@@ -74,7 +74,7 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
                 exitMultiSelectMode()
             } else {
                 notesViewModel.setSelectedNote(null)                                        // when creating a new note you need to have a nothing in your note, so when you go out from fragment you need to set selected note to null!! override previous note which you can update before!!
-                findNavController().navigate(R.id.addEditNoteFragment)                                                           //zarzada nawigacją, odnosnik do fragmentu
+                findNavController().navigate(R.id.action_mainFragment_to_addEditNoteFragment)                                                           //zarzada nawigacją, odnosnik do fragmentu
             }
         }
         sortData_fb.setOnClickListener {
@@ -108,7 +108,7 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
                 selectNote(note, position)
         } else {
             notesViewModel.setSelectedNote(note)
-            findNavController().navigate(R.id.addEditNoteFragment)
+            findNavController().navigate(R.id.action_mainFragment_to_addEditNoteFragment)
             Log.d("TAG", "$note position: $position")
         }
     }
@@ -128,7 +128,6 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
         }
         else
          updateNotes(notesViewModel.allNotes.value!!)
-        ////
 
         Log.d("OK", "udało sie on item click dialog  $sortDesc")
     }
