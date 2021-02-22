@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,7 +17,6 @@ import com.example.noteapp.adapters.NoteAdapter
 import com.example.noteapp.data.Note
 import com.example.noteapp.viewmodels.NotesViewModel
 import kotlinx.android.synthetic.main.fragment_main.*
-import java.util.*
 
 // NoteAdapter.OnItemClickListener  -- moj interfejs obslugujacy klikniecie na notatce z adaptera
 // dzieki temu mamy dane z Adaptera dostepne w Fragmencie
@@ -123,8 +122,13 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
     override fun onItemClickDialog(sortDesc: Boolean) {
         //ustawienie sortowania w viewmodel
         notesViewModel.sortDesc = sortDesc
-        updateNotes(notesViewModel.allNotes.value!!)
-
+        if (notesViewModel.findString.isNotEmpty()) {                               // first find the sort hich you have found
+           val list =  notesViewModel.findInNotes(notesViewModel.findString)
+            updateNotes(list)
+        }
+        else
+         updateNotes(notesViewModel.allNotes.value!!)
+        ////
 
         Log.d("OK", "udało sie on item click dialog  $sortDesc")
     }
@@ -133,10 +137,8 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
 
         inflater.inflate(R.menu.search_menu, menu)
         val menuItem = menu.findItem(R.id.action_search)
-        searchView =
-            menuItem.actionView as SearchView                                                      // nasz Search View bedzie obslugiwany jak normalny Search view ma obsluge klikania i wychodzenia !!!
-        searchView.queryHint =
-            "Search in notes"                                                            // dziala to przez uzycie w xml-u lini  actionViewClass
+        searchView = menuItem.actionView as SearchView                                                      // nasz Search View bedzie obslugiwany jak normalny Search view ma obsluge klikania i wychodzenia !!!
+        searchView.queryHint = "Search in notes"                                                            // dziala to przez uzycie w xml-u lini  actionViewClass
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {  // po zatwierdzeniu
@@ -145,20 +147,17 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {  // przy wpisywaniu
-                updateNotes(notesViewModel.findInNotes(newText.toString()))                                              // zeby uzywac mvvm wiec logika w view modelu
+                val list = notesViewModel.findInNotes(newText.toString())
+                notesViewModel.findString = newText.toString()
+                updateNotes(list)                                              // zeby uzywac mvvm wiec logika w view modelu
                 Log.d("OK", "nie ok $newText")
                 return false
             }
-
         })
-
     }
 
     private fun updateNotes(list: List<Note>) {
-        noteAdapter = if (notesViewModel.sortDesc) NoteAdapter(
-            list,
-            this
-        )                                                                //this bo implemetujemy w naszym fragmencie  obiekt ktory jest listenerem : NoteAdapter.OnItemClickListener
+        noteAdapter = if (notesViewModel.sortDesc) NoteAdapter(list, this)                                                                //this bo implemetujemy w naszym fragmencie  obiekt ktory jest listenerem : NoteAdapter.OnItemClickListener
         else NoteAdapter(list.asReversed(), this)
         recyclerView.adapter = noteAdapter
     }
@@ -169,12 +168,7 @@ class MainFragment : Fragment(), NoteAdapter.OnItemClickListener,
 
             (requireActivity() as AppCompatActivity).supportActionBar?.title = "Multi-select mode"
         } else {
-            addNote_fb.setImageIcon(
-                Icon.createWithResource(
-                    requireContext(),
-                    R.drawable.ic_note_add
-                )
-            )
+            addNote_fb.setImageIcon(Icon.createWithResource(requireContext(), R.drawable.ic_note_add))
             addNote_fb.labelText = "Add note"
             (requireActivity() as AppCompatActivity).supportActionBar?.title = "Your notes"
         }

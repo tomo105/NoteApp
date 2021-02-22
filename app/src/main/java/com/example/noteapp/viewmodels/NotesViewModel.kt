@@ -16,7 +16,7 @@ class NotesViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getSelectedNote(): LiveData<Note?> = selectedNote                                         // pobierany livedata ale juz nie zmienne tylko zwykle
     fun setSelectedNote(note: Note?) { selectedNote.postValue(note) }                                                             // zmieniamy obiekt --> moze byc null wiec nie wono dodac !!
-
+    var findString = ""
     var sortDesc = true
     var multiSelectMode = false                                                                    //usuwanie i odznaczanie notatek
     var selectedNotesToDelete = ArrayList<Note>()
