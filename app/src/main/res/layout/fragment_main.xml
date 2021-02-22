@@ -2,14 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorAccent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragments.MainFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/note_item"
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -17,21 +15,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/note_item" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:layout_width="wrap_content"
+        app:menu_colorPressed="@color/colorMyBlue"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu_colorNormal="@color/colorMyBlue">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/addNote_fb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_note_add"
+            app:fab_colorNormal="@color/colorMyBlue"
+            app:fab_colorPressed="@color/colorMyBlue"
             app:fab_label="Add note" />
 
         <com.github.clans.fab.FloatingActionButton
@@ -39,6 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_sort"
+            app:fab_colorNormal="@color/colorMyBlue"
+            app:fab_colorPressed="@color/colorMyBlue"
             app:fab_label="Sort date" />
 
     </com.github.clans.fab.FloatingActionMenu>

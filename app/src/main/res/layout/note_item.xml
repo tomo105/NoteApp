@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="7dp"
+    app:cardElevation="15dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -14,7 +15,6 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:maxLines="1"
             android:id="@+id/note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
-            android:textSize="20sp"
+            android:fontFamily="@font/mommy_cupcakes"
+            android:maxLines="1"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -30,15 +32,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:maxLines="1"
             android:id="@+id/note_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textSize="18sp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
+            android:fontFamily="@font/mommy_cupcakes"
+            android:maxLines="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
